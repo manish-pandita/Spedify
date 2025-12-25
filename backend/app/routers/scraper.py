@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from app.database import get_db
 from app.models import models, schemas
 from app.services.scraper import AIScraper
-from datetime import datetime
+from datetime import datetime, timezone
 
 router = APIRouter()
 scraper = AIScraper()
@@ -37,7 +37,7 @@ async def scrape_url(request: schemas.ScrapeRequest, db: Session = Depends(get_d
                 if key != 'url':  # Don't update URL
                     setattr(existing, key, value)
             
-            existing.updated_at = datetime.utcnow()
+            existing.updated_at = datetime.now(timezone.utc)
             db.commit()
             db.refresh(existing)
             

@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from typing import List, Optional
 from app.database import get_db
 from app.models import models, schemas
-from datetime import datetime
+from datetime import datetime, timezone
 
 router = APIRouter()
 
@@ -85,7 +85,7 @@ async def update_product(
     for key, value in product_update.model_dump().items():
         setattr(db_product, key, value)
     
-    db_product.updated_at = datetime.utcnow()
+    db_product.updated_at = datetime.now(timezone.utc)
     db.commit()
     db.refresh(db_product)
     

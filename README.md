@@ -180,6 +180,20 @@ OPENAI_API_KEY=sk-...
 - React Router - Navigation
 - Lucide React - Icons
 
+## ⚠️ Security Notes
+
+**Current Implementation:**
+- The application uses a hardcoded `default-user` ID for simplicity and demonstration purposes
+- This is **NOT suitable for production** use
+
+**For Production Deployment:**
+- Implement proper user authentication (OAuth, JWT, or session-based)
+- Add user registration and login system
+- Secure API endpoints with authentication middleware
+- Use environment variables for sensitive configuration
+- Enable HTTPS/SSL for all connections
+- Implement rate limiting and API security best practices
+
 ## 🚀 Production Deployment
 
 ### Backend
