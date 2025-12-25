@@ -4,18 +4,63 @@ from typing import Optional, Dict, Any
 import re
 import os
 from openai import OpenAI
+from urllib.parse import urlparse
 
 class AIScraper:
-    """AI-powered web scraper for extracting product information"""
+    """AI-powered web scraper for extracting product information
+    
+    Security Note: This scraper accepts user-provided URLs and makes HTTP requests.
+    In production, implement additional security measures:
+    - URL validation and allowlist
+    - Rate limiting per user/IP
+    - Timeout enforcement
+    - Request size limits
+    - Network isolation
+    """
+    
+    # Allowed URL schemes for scraping
+    ALLOWED_SCHEMES = {'http', 'https'}
+    # Blocked hosts (localhost, private IPs, etc.)
+    BLOCKED_HOSTS = {
+        'localhost', '127.0.0.1', '0.0.0.0',
+        '169.254.169.254',  # AWS metadata
+        '[::1]',  # IPv6 localhost
+    }
     
     def __init__(self):
         api_key = os.getenv("OPENAI_API_KEY", "")
         self.use_ai = bool(api_key and api_key != "your_openai_api_key_here")
         if self.use_ai:
             self.client = OpenAI(api_key=api_key)
-        
+    
+    def _validate_url(self, url: str) -> None:
+        """Validate URL to prevent SSRF attacks"""
+        try:
+            parsed = urlparse(url)
+            
+            # Check scheme
+            if parsed.scheme not in self.ALLOWED_SCHEMES:
+                raise ValueError(f"URL scheme '{parsed.scheme}' not allowed. Only {self.ALLOWED_SCHEMES} are permitted.")
+            
+            # Check for blocked hosts
+            hostname = parsed.hostname or ''
+            if hostname.lower() in self.BLOCKED_HOSTS:
+                raise ValueError(f"Access to host '{hostname}' is not allowed.")
+            
+            # Check for private IP ranges (basic check)
+            if hostname.startswith('10.') or hostname.startswith('192.168.') or hostname.startswith('172.'):
+                raise ValueError("Access to private IP addresses is not allowed.")
+                
+        except Exception as e:
+            raise ValueError(f"Invalid URL: {str(e)}")
+    
     def scrape_product(self, url: str) -> Dict[str, Any]:
-        """Scrape product information from a URL"""
+        """Scrape product information from a URL
+        
+        Security: Validates URL before making requests to prevent SSRF
+        """
+        # Validate URL before making request
+        self._validate_url(url)
         try:
             headers = {
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
