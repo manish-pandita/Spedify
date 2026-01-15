@@ -12,7 +12,7 @@ Spedify is designed to eliminate the time-consuming process of manually searchin
 - **Product Collection Management** - Organize and maintain lists of products for continuous monitoring
 - **Secure User Authentication** - Protected user accounts with JWT-based authentication system
 - **Price Change Notifications** - Alert system for tracking significant price reductions
-- **Cross-Platform Compatibility** - Responsive interface accessible from desktop and mobile devices
+- **Cross-Platform Compatibility** - Responsive interface accessible from desktop and mobile devices.
 
 ## Tech Stack
 
